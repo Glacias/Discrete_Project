@@ -34,7 +34,7 @@ end
 
 # Write a model and an algorithm that finds the largest module 
 # where the module is defined as a set of genes in which 
-# all pairwise co-expressions are present
+# all pairwise co-expressions are present, except a predefined number of them
 
 model = Model(Gurobi.Optimizer)
 
@@ -45,6 +45,11 @@ model = Model(Gurobi.Optimizer)
 
 @variable(model, x[i=1:n_genes], Bin)
 
+# Y_ij = 1 when gene i and j don't have to be related
+#      = 0 otherwise 
+
+@variable(model, y[i=1:n_genes, j=1:n_genes; i > j], Bin)
+
 ## Objective
 
 # Max sum x_i
@@ -53,9 +58,18 @@ model = Model(Gurobi.Optimizer)
 
 ## Constraints
 
-# X_i + X_j <= 1 + net_mat[i,j] (with i=/=j if diag is 0)
+# X_i + X_j <= 1 + net_mat[i,j] + Y_ij (with i=/=j if diag is 0) for all i and j
 
-@constraint(model, [i = 1:n_genes, j = 1:n_genes; i > j], x[i] + x[j] <= 1 + net_mat[i,j])
+@constraint(model, [i = 1:n_genes, j = 1:n_genes; i > j], x[i] + x[j] <= 1 + net_mat[i,j] + y[i,j])
+
+# sum_i sum_j Y_ij = 2*p where p is the prefined number
+
+p = 5
+@constraint(model, sum(y) == p)
+
+# Y_ij = Y_ji for all i and j
+
+#@constraint(model, [i = 1:n_genes, j = 1:n_genes; i != j], y[i,j] == y[j,i])
 
 ## Solve
 optimize!(model)
