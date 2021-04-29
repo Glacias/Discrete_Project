@@ -64,8 +64,8 @@ model = Model(Gurobi.Optimizer)
 
 # sum_s = 2*p where p is the prefined number
 
-p = 5
-@constraint(model, sum(s) == 2*p)
+p = 0.2
+@constraint(model, sum(s) <= 2*p*sum(x))
 
 ## Solve
 optimize!(model)
