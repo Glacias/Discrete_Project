@@ -1,9 +1,20 @@
-using JuMP
-using Gurobi
 using CSV
 using DataFrames
 using Bijections
 using LinearAlgebra
+using LightGraphs
+
+# Function that returns :
+# - true if a vertex is connected to all the members in the set provided
+# - false otherwise
+function is_related_to_entire_set(vertex, set, g)
+	for v in set
+		if !(has_edge(g, vertex, v))
+			return false
+		end
+	end
+	return true
+end
 
 # Read the data
 DATA_dir = joinpath("hsa") # Path to the data
@@ -24,7 +35,7 @@ end
 
 # Create the co-expression network matrix
 threshold = 1
-net_mat = zeros(Int8, n_genes, n_genes) # Initialize matrix to zeroes
+net_mat = zeros(Int64, n_genes, n_genes) # Initialize matrix to zeroes
 
 for i in 1:DataFrames.nrow(raw_df)
 	if raw_df[i, 3] >= threshold
@@ -33,59 +44,33 @@ for i in 1:DataFrames.nrow(raw_df)
 	end
 end
 
-# Write a model and an algorithm that finds the largest module 
-# where the module is defined as a set of genes in which 
-# all pairwise co-expressions are present
+# Create graph
+g = Graph(net_mat)
 
-model = Model(Gurobi.Optimizer)
+### Greedy algo (sorted by degree)
 
-## Variables
+# Sort gene by degree
+degrees = vec(sum(net_mat, dims=1))
+sorted_vertex = sortperm(degrees, rev=true)
 
-# X_i = 1 if gene i is in the module
-#     = 0 otherwise
-
-@variable(model, x[i=1:n_genes], Bin)
-
-## Objective
-
-# Max sum x_i
-
-@objective(model, Max, sum(x))
-
-## Constraints
-
-# X_i + X_j <= 1 + net_mat[i,j] (with i=/=j if diag is 0)
-
-@constraint(model, [i = 1:n_genes, j = 1:n_genes; i > j], x[i] + x[j] <= 1 + net_mat[i,j])
-
-## Solve
-optimize!(model)
-
-# Get solution
-x_sol = value.(x)
-
-# Number of gene in the module (clique)
-objective_value(model)
-
-# Set of gene in the module (clique)
+# Start from the empty set
 clique = Set()
-for i in 1:n_genes
-	if x_sol[i] == 1
-		push!(clique, i)
+
+# Try to add vertex if set remains a clique
+for gene in sorted_vertex
+	if is_related_to_entire_set(gene, clique, g)
+		push!(clique, gene)
 	end
 end
 
 
+
 ### Display the graph and the clique found
 
-using LightGraphs
 using GraphPlot
 using Colors
 using Cairo
 using Compose
-
-# Create graph
-g = Graph(net_mat)
 
 membership = ones(Int64, n_genes)
 nodecolor = [colorant"lightseagreen", colorant"orange"]
@@ -97,4 +82,4 @@ end
 nodefillc = nodecolor[membership]
 
 # Save graph in pdf
-draw(PDF(string("graph-", file_name, ".pdf"), 16cm, 16cm), gplot(g, nodefillc=nodefillc))
+draw(PDF(string("graph-", file_name, "-greedy.pdf"), 16cm, 16cm), gplot(g, nodefillc=nodefillc))

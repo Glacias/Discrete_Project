@@ -7,7 +7,8 @@ using LinearAlgebra
 
 # Read the data
 DATA_dir = joinpath("hsa") # Path to the data
-raw_df = CSV.read(joinpath(DATA_dir, "GSE10063.txt"), DataFrames.DataFrame, header=0)
+file_name = "GSE10063"
+raw_df = CSV.read(joinpath(DATA_dir, string(file_name, ".txt")), DataFrames.DataFrame, header=0)
 
 # Create the set of genes
 genes_set = Set(vcat(raw_df[:,1], raw_df[:,2]))
