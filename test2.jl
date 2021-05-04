@@ -63,7 +63,7 @@ model = Model(Gurobi.Optimizer)
 
 @constraint(model, [i = 1:n_genes], x' * net_mat[i,:] + s[i] >= sum(x)-1 - (1-x[i])*n_genes)
 
-# sum_s = 2*p where p is the prefined number
+# sum_s = 2*p where p is the prefined number of link allowed to be missing
 
 p = 5
 @constraint(model, sum(s) == 2*p)

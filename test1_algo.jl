@@ -4,7 +4,12 @@ using Bijections
 using LinearAlgebra
 using LightGraphs
 
-# Function that returns :
+# Function that check if a vertex is related to all the element of a set
+# Inputs :
+# - vertex -> the index of the gene
+# - set -> the set of genes
+# - g -> graph representing the gene connection
+# Returns :
 # - true if a vertex is connected to all the members in the set provided
 # - false otherwise
 function is_related_to_entire_set(vertex, set, g)
