@@ -88,14 +88,8 @@ for i in 1:DataFrames.nrow(raw_df)
 	end
 end
 
-#c = find_maximum_clique(net_mat, Set([1]))
-#c1 = find_maximal_clique_with_cover(net_mat, Set([5]))
-
 # Set of the already selected genes
 set_ignore = Set([])
-
-# Minimum module size
-mod_size_min = 10
 
 # Store the solution
 vect_mod = Vector{Set}(undef, 0)
@@ -103,14 +97,13 @@ vect_mod = Vector{Set}(undef, 0)
 # Find the first maximum clique
 c = find_maximum_clique(net_mat, set_ignore)
 
+# Add the clique to the set of genes to ignore
+set_ignore = union(set_ignore, c)
+
 # Add it to the solution
 push!(vect_mod, c)
 
-i = 1
 while length(set_ignore) < n_genes
-
-	# Add the previous clique to the set of genes to ignore
-	set_ignore = union(set_ignore, vect_mod[i])
 
 	# Find the maximum clique in the graph where we ignore previously selected genes
 	c_small = find_maximum_clique(net_mat, set_ignore)
@@ -118,9 +111,9 @@ while length(set_ignore) < n_genes
 	# Find the largest maximal clique in the initial graph that covers the clique found above
 	c_sol = find_maximal_clique_with_cover(net_mat, c_small)
 
+	# Add the previous clique to the set of genes to ignore
+	set_ignore = union(set_ignore, c_small)
+
 	# Save the solution
 	push!(vect_mod, c_sol)
-
-	i = i+1
 end
-
