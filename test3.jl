@@ -73,4 +73,17 @@ optimize!(model)
 
 # Get solution
 x_sol = value.(x)
-objective_value(model)
+
+# Set of gene in the module (clique)
+clique = Set()
+for i in 1:n_genes
+	if x_sol[i] == 1
+		push!(clique, i)
+	end
+end
+
+# Translate the genes back to their original number
+module_gene = Set()
+for g_index in clique
+	push!(module_gene, b[g_index])
+end

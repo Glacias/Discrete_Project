@@ -99,6 +99,12 @@ while (p-total_miss) >= n_slack
 	n_slack = n_slack + 1
 end
 
+# Translate the genes back to their original number
+module_gene = Set()
+for g_index in clique
+	push!(module_gene, b[g_index])
+end
+
 
 
 ### Display the graph and the clique found

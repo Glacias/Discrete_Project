@@ -92,7 +92,7 @@ end
 set_ignore = Set([])
 
 # Store the solution
-vect_mod = Vector{Set}(undef, 0)
+vect_clique = Vector{Set}(undef, 0)
 
 # Find the first maximum clique
 c = find_maximum_clique(net_mat, set_ignore)
@@ -101,7 +101,7 @@ c = find_maximum_clique(net_mat, set_ignore)
 set_ignore = union(set_ignore, c)
 
 # Add it to the solution
-push!(vect_mod, c)
+push!(vect_clique, c)
 
 while length(set_ignore) < n_genes
 
@@ -115,5 +115,16 @@ while length(set_ignore) < n_genes
 	set_ignore = union(set_ignore, c_small)
 
 	# Save the solution
-	push!(vect_mod, c_sol)
+	push!(vect_clique, c_sol)
+end
+
+# Translate the genes back to their original number
+vect_mod = Vector{Set}(undef, 0)
+
+for clique in vect_clique
+	module_gene = Set()
+	for g_index in clique
+		push!(module_gene, b[g_index])
+	end
+	push!(vect_mod, module_gene)
 end

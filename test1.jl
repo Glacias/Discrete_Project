@@ -75,6 +75,13 @@ for i in 1:n_genes
 	end
 end
 
+# Translate the genes back to their original number
+module_gene = Set()
+for g_index in clique
+	push!(module_gene, b[g_index])
+end
+
+
 
 ### Display the graph and the clique found
 
