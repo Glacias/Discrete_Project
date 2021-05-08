@@ -100,28 +100,8 @@ while (p-total_miss) >= n_slack
 end
 
 # Translate the genes back to their original number
+# The results are stored in module_gene
 module_gene = Set()
 for g_index in clique
 	push!(module_gene, b[g_index])
 end
-
-
-
-### Display the graph and the clique found
-
-using GraphPlot
-using Colors
-using Cairo
-using Compose
-
-membership = ones(Int64, n_genes)
-nodecolor = [colorant"lightseagreen", colorant"orange"]
-
-for k in clique
-	membership[k] = 2
-end
-
-nodefillc = nodecolor[membership]
-
-# Save graph in pdf
-draw(PDF(string("graph-", file_name, "-greedy2.pdf"), 16cm, 16cm), gplot(g, nodefillc=nodefillc))

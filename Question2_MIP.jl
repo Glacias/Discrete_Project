@@ -83,6 +83,7 @@ for i in 1:n_genes
 end
 
 # Translate the genes back to their original number
+# The results are stored in module_gene
 module_gene = Set()
 for g_index in clique
 	push!(module_gene, b[g_index])

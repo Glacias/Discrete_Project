@@ -76,6 +76,7 @@ for i in 1:n_genes
 end
 
 # Translate the genes back to their original number
+# The results are stored in module_gene
 module_gene = Set()
 for g_index in clique
 	push!(module_gene, b[g_index])
@@ -85,23 +86,23 @@ end
 
 ### Display the graph and the clique found
 
-using LightGraphs
-using GraphPlot
-using Colors
-using Cairo
-using Compose
+#using LightGraphs
+#using GraphPlot
+#using Colors
+#using Cairo
+#using Compose
 
 # Create graph
-g = Graph(net_mat)
+#g = Graph(net_mat)
 
-membership = ones(Int64, n_genes)
-nodecolor = [colorant"lightseagreen", colorant"orange"]
+#membership = ones(Int64, n_genes)
+#nodecolor = [colorant"lightseagreen", colorant"orange"]
 
-for k in clique
-	membership[k] = 2
-end
+#for k in clique
+#	membership[k] = 2
+#end
 
-nodefillc = nodecolor[membership]
+#nodefillc = nodecolor[membership]
 
 # Save graph in pdf
-draw(PDF(string("graph-", file_name, ".pdf"), 16cm, 16cm), gplot(g, nodefillc=nodefillc))
+#draw(PDF(string("graph-", file_name, ".pdf"), 16cm, 16cm), gplot(g, nodefillc=nodefillc))

@@ -119,6 +119,7 @@ while length(set_ignore) < n_genes
 end
 
 # Translate the genes back to their original number
+# The results are stored in vect_mod that contrains ech module
 vect_mod = Vector{Set}(undef, 0)
 
 for clique in vect_clique
