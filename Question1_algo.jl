@@ -61,7 +61,7 @@ sorted_vertex = sortperm(degrees, rev=true)
 # Start from the empty set
 clique = Set()
 
-# Try to add vertex if set remains a clique
+# Try to add vertex if set remains a module (clique)
 for gene in sorted_vertex
 	if is_related_to_entire_set(gene, clique, g)
 		push!(clique, gene)

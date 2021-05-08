@@ -87,7 +87,7 @@ n_slack = 0
 # Total current missing links
 total_miss = 0
 
-# Try to add vertex if set remains a clique 
+# Try to add vertex if set remains a module (clique)
 # and increase the number of missing links allowed at each iteration
 while (p-total_miss) >= n_slack
 	for gene in sorted_vertex
